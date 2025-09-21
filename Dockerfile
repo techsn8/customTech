@@ -1,14 +1,25 @@
-# Step 1: Use an official OpenJDK base image from Docker Hub
-FROM openjdk:17-jdk-alpine
+# Use a suitable base image (e.g., OpenJDK for Java applications)
+FROM openjdk:17-jdk-slim
 
-# Step 2: Set the working directory inside the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy the Spring Boot JAR file into the container
-COPY target/my-spring-boot-app.jar /app/my-spring-boot-app.jar
+# Copy the Maven wrapper scripts and the pom.xml
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Step 4: Expose the port your application runs on
+# Make the Maven wrapper script executable
+RUN chmod +x mvnw
+
+# Copy the rest of your application source code
+COPY src src
+
+# Build the application using the Maven wrapper
+RUN ./mvnw package
+
+# Expose the port your application listens on (if applicable)
 EXPOSE 8080
 
-# Step 5: Define the command to run your Spring Boot application
-CMD ["java", "-jar", "/app/my-spring-boot-app.jar"]
+# Define the command to run your application
+CMD ["java", "-jar", "target/your-application.jar"]
