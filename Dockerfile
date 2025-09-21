@@ -11,4 +11,4 @@ COPY target/my-spring-boot-app.jar /app/my-spring-boot-app.jar
 EXPOSE 8080
 
 # Step 5: Define the command to run your Spring Boot application
-CMD ["java", "-jar", "/app/customTech-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
