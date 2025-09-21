@@ -22,7 +22,7 @@ RUN ./mvnw package
 EXPOSE 8080
 
 #Copy
-COPY target/customTech-0.0.1-SNAPSHOT.jar /app/customTech-0.0.1-SNAPSHOT.jar
+COPY target/myapp.jar /app/myapp.jar
 
 # Define the command to run your application
-CMD ["java", "-jar", "/app/customTech-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app/myapp.jar"]
