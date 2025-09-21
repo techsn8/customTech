@@ -22,4 +22,4 @@ RUN ./mvnw package
 EXPOSE 8080
 
 # Define the command to run your application
-CMD ["java", "-jar", "target/customTech.jar"]
+CMD ["java", "-jar", "target/CustomTech.jar"]
