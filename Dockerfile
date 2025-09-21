@@ -1,15 +1,25 @@
-# Stage 1: Build the application
-FROM eclipse-temurin:17-jdk-focal AS build
-WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
-COPY src ./src
-RUN ./mvnw clean package -DskipTests
+# Use a suitable base image (e.g., OpenJDK for Java applications)
+FROM openjdk:17-jdk-slim
 
-# Stage 2: Create the final image
-FROM eclipse-temurin:17-jre-focal
+# Set the working directory inside the container
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copy the Maven wrapper scripts and the pom.xml
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+# Make the Maven wrapper script executable
+RUN chmod +x mvnw
+
+# Copy the rest of your application source code
+COPY src src
+
+# Build the application using the Maven wrapper
+RUN ./mvnw package
+
+# Expose the port your application listens on (if applicable)
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Define the command to run your application
+CMD ["java", "-jar", "target/your-application.jar"]
