@@ -21,5 +21,8 @@ RUN ./mvnw package
 # Expose the port your application listens on (if applicable)
 EXPOSE 8080
 
+#Copy
+COPY target/customTech-0.0.1-SNAPSHOT.jar /app/customTech-0.0.1-SNAPSHOT.jar
+
 # Define the command to run your application
-CMD ["java", "-jar", "target/CustomTech.jar"]
+CMD ["java", "-jar", "/app/customTech-0.0.1-SNAPSHOT.jar"]
