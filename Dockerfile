@@ -1,5 +1,7 @@
 # Stage 1: Build stage
-FROM maven:3.3.1-openjdk-17-slim AS build
+#FROM maven:3.3.1-openjdk-17-slim AS build
+FROM openjdk:17-jdk-alpine
+
 WORKDIR /app
 # Copying pom.xml first for efficient dependency caching
 COPY pom.xml .
