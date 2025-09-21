@@ -1,25 +1,30 @@
-# Use a suitable base image (e.g., OpenJDK for Java applications)
-FROM openjdk:17-jdk-slim
-
-# Set the working directory inside the container
+# Stage 1: Build stage
+FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
-
-# Copy the Maven wrapper scripts and the pom.xml
-COPY mvnw .
-COPY .mvn .mvn
+# Copying pom.xml first for efficient dependency caching
 COPY pom.xml .
+RUN mvn dependency:go-offline
+# Copying the source code and building the application
+COPY src ./src
+# Build application
+RUN mvn clean package -DskipTests
+# Extract the jar file
+RUN jar xf target/customTech-0.0.1-SNAPSHOT.jar
+# Get modules to deps file
+RUN jdeps --ignore-missing-deps -q --recursive --multi-release 17 --print-module-deps --class-path 'BOOT-INF/lib/*' target/customTech-0.0.1-SNAPSHOT.jar > deps.info && cat deps.info
+# Create custom JRE
+RUN jlink --module-path $JAVA_HOME/jmods --add-modules $(cat deps.info) --compress 2 --no-header-files --no-man-pages --output custom-jre/
 
-# Make the Maven wrapper script executable
-RUN chmod +x mvnw
+FROM ubuntu:jammy AS runner
 
-# Copy the rest of your application source code
-COPY src src
+#Set the JAVA_HOME environment variable
+ENV JAVA_HOME=/usr/java
+ENV PATH=$JAVA_HOME/bin:$PATH
+# Copy the custom JRE from the build stage
+COPY --from=build /app/custom-jre $JAVA_HOME
+WORKDIR /app
+# Copy the application jar file
+COPY --from=build /app/target/customTech-0.0.1-SNAPSHOT.jar /app/app.jar
+# Run the application
+CMD ["java", "-jar", "./app.jar"]
 
-# Build the application using the Maven wrapper
-RUN ./mvnw package
-
-# Expose the port your application listens on (if applicable)
-EXPOSE 8080
-
-# Define the command to run your application
-CMD ["java", "-jar", "target/your-application.jar"]
