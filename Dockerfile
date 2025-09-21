@@ -22,7 +22,7 @@ RUN ./mvnw package
 EXPOSE 8080
 
 #Copy
-COPY target/myapp.jar /app/myapp.jar
+COPY target/app.jar /app/app.jar
 
 # Define the command to run your application
-CMD ["java", "-jar", "/app/myapp.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
